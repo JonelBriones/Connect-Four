@@ -1,0 +1,6 @@
+.menu {
+  border: 2px solid red;
+}
+.menu .header {
+  font-size: 24px;
+}

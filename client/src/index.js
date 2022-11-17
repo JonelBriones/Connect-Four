@@ -1,17 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { grey } from '@mui/material/colors'
+import App from './App'
+import '../src/assets/fonts/SpaceGrotesk-VariableFont_wght.ttf'
+const root = ReactDOM.createRoot(document.getElementById('root'))
+
+// create your own themes
+// const buttonColor = grey
+const theme = createTheme({
+  palette: {
+    playBtn: {
+      main: grey[50],
+    },
+  },
+  typography: {
+    fontFamily: ['SpaceGrotesk-Bold'],
+  },
+})
+
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  <ThemeProvider theme={theme}>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </ThemeProvider>
+)
