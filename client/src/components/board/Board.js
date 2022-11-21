@@ -1,7 +1,8 @@
-import { resolveBreakpointValues } from '@mui/system/breakpoints'
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { Button } from '@mui/material'
+import { FaRegHandPointer } from 'react-icons/fa'
 import BoardOnClick from './BoardOnClick'
-import { defaultBoard } from './defaultBoard'
+import { defaultBoard, ROW_LENGTH } from './defaultBoard'
 import {
   COLUMN_1,
   COLUMN_2,
@@ -11,10 +12,25 @@ import {
   COLUMN_6,
   COLUMN_7,
 } from './rows'
+import { HORIZONTAL_WINS } from './winPatterns'
 const Board = () => {
   const [board, setBoard] = useState(defaultBoard)
-  const [color, setColor] = useState('red')
-  console.log(board)
+  const [result, setResult] = useState({})
+  const [color, setColor] = useState('yellow')
+  const [winHistory, setWinHistory] = useState({
+    playerOne: 0,
+    playerTwo: 0,
+  })
+  const [onHover, setOnHovering] = useState()
+  useEffect(() => {
+    checkWin()
+    if (color === 'red') {
+      setColor('yellow')
+    }
+    if (color === 'yellow') {
+      setColor('red')
+    }
+  }, [board])
   const chooseColumn = (num) => {
     if (COLUMN_1.includes(num)) {
       console.log('it contains numbers from column 1')
@@ -46,13 +62,13 @@ const Board = () => {
     }
   }
   const choose = (columnNum, circleNum) => {
-    console.log(columnNum)
-    console.log(circleNum)
+    // console.log(columnNum)
+    // console.log(circleNum)
+    if (result.winner) return
     let columnsEmpty = []
     for (let i = 0; i < columnNum.length; i++) {
       board.map((val, idx) => {
         if (idx === columnNum[i] && val === '') {
-          console.log(columnNum[i])
           columnsEmpty.push(idx)
         }
       })
@@ -63,12 +79,6 @@ const Board = () => {
         ? setBoard(
             board.map((val, idx) => {
               if (idx === columnsEmpty[0] && val === '') {
-                if (color === 'red') {
-                  setColor('yellow')
-                }
-                if (color === 'yellow') {
-                  setColor('red')
-                }
                 return color
               }
 
@@ -79,82 +89,123 @@ const Board = () => {
     )
     // console.log('empty circles in column', columnsEmpty)
   }
+  const checkWin = () => {
+    HORIZONTAL_WINS.forEach((currentPattern) => {
+      // IF THERE ARE < 4 CONNECTED SLOTS, RETURN
+      const variantOne_RowOne = board[currentPattern[0]]
+      const variantTwo_RowOne = board[currentPattern[1]]
+      const variantThree_RowOne = board[currentPattern[2]]
+      const variantFour_RowOne = board[currentPattern[3]]
+      if (
+        variantOne_RowOne === '' ||
+        variantTwo_RowOne === '' ||
+        variantThree_RowOne === '' ||
+        variantFour_RowOne === ''
+      )
+        return
+      let foundWinningPattern = true
+      currentPattern.forEach((idx) => {
+        if (board[idx] !== color) {
+          console.log(`checking slots... ${idx} matches player:${color}`)
+          foundWinningPattern = false
+        }
+      })
+      if (foundWinningPattern) {
+        let winner = ''
+        if (color === 'red') winner = 'Player One'
+        if (color === 'yellow') winner = 'Player Two'
+        let gameResult = {
+          winner: winner,
+          state: 'nice cock!',
+        }
+        setResult(gameResult)
+        if (winner === 'Player One') {
+          setWinHistory({ ...winHistory, playerOne: winHistory.playerOne + 1 })
+        }
+        if (winner === 'Player Two') {
+          setWinHistory({
+            ...winHistory,
+            playerTwo: winHistory.playerTwo + 1,
+          })
+        }
+      }
+      console.log('FOUR SLOTS HAVE BEEN PICKED, POTENTIAL WIN!')
+    })
+  }
+  const restart = () => {
+    setBoard(defaultBoard)
+    setResult({})
+  }
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  useEffect(() => {
+    const updateMousePosition = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY })
+      console.log(mousePosition.x)
+    }
+    window.addEventListener('mousemove', updateMousePosition)
+    return () => window.removeEventListener('mousemove', updateMousePosition)
+  }, [])
+  const [toggleMarker, setToggleMarker] = useState(true)
+  const turnOnMarker = (boolean) => {
+    console.log('hovering', toggleMarker)
+    setToggleMarker(boolean)
+  }
   return (
     <>
-      <div className="board">
-        {board.map((__, idx) => {
-          return (
-            <BoardOnClick
-              choose={() => chooseColumn(idx)}
-              board={board[idx]}
-              val={idx}
-              color={color}
-              key={idx}
+      <Button variant="contained" color="playBtn" href="/">
+        Go back to menu
+      </Button>
+      <Button variant="contained" color="success" onClick={restart}>
+        Restart
+      </Button>
+      {result.winner ? (
+        <h1>
+          {`${result.winner}, 
+          ${result.state}`}
+        </h1>
+      ) : null}
+      <div className="board-container">
+        <div className="player-card one">
+          <img src="/images/player-one.svg" alt="player-one" />
+          <div className="info">
+            <h5>Player One</h5>
+            <h1>{winHistory.playerOne}</h1>
+          </div>
+        </div>
+        <div
+          className="board"
+          onMouseEnter={() => turnOnMarker(true)}
+          onMouseLeave={() => turnOnMarker(false)}>
+          <>
+            <img
+              src={`/images/marker-${color}.svg`}
+              alt="player-two"
+              className={`marker ${!toggleMarker ? 'disabled' : null}`}
+              style={{
+                transform: `translate(${mousePosition.x}px)`,
+                // transition: 'opacity 2s ease',
+                // opacity: `${toggleMarker ? 1 : 0}`,
+              }}
             />
-          )
-        })}
+            {board.map((__, idx) => {
+              return (
+                <BoardOnClick
+                  choose={!result.winner ? () => chooseColumn(idx) : null}
+                  board={board[idx]}
+                  val={idx}
+                  color={!result.winner ? color : null}
+                  key={idx}
+                />
+              )
+            })}
+          </>
+        </div>
+        <div className="player-card two">
+          <img src="/images/player-two.svg" alt="player-two" />
+          <h5>Player Two</h5>
+          <h1>{winHistory.playerTwo}</h1>
+        </div>
       </div>
-      {/* <div className="board">
-        <BoardOnClick choose={() => choose(0)} color={board[0]} val={0} />
-        <BoardOnClick
-          choose={() => choose(1, 'COLUMN_1')}
-          color={board[1]}
-          val={1}
-        />
-        <BoardOnClick
-          choose={() => choose(2, 'COLUMN_1')}
-          color={board[2]}
-          val={2}
-        />
-        <BoardOnClick
-          choose={() => choose(3, 'COLUMN_1')}
-          color={board[3]}
-          val={3}
-        />
-        <BoardOnClick choose={() => choose(4)} color={board[4]} val={4} />
-        <BoardOnClick choose={() => choose(5)} color={board[5]} val={5} />
-        <BoardOnClick choose={() => choose(6)} color={board[6]} val={6} />
-
-        <BoardOnClick choose={() => choose(7)} color={board[7]} val={7} />
-        <BoardOnClick choose={() => choose(8)} color={board[8]} val={8} />
-        <BoardOnClick choose={() => choose(9)} color={board[9]} val={9} />
-        <BoardOnClick choose={() => choose(10)} color={board[10]} val={10} />
-        <BoardOnClick choose={() => choose(11)} color={board[11]} val={11} />
-        <BoardOnClick choose={() => choose(12)} color={board[12]} val={12} />
-        <BoardOnClick choose={() => choose(13)} color={board[13]} val={13} />
-
-        <BoardOnClick choose={() => choose(14)} color={board[14]} val={14} />
-        <BoardOnClick choose={() => choose(15)} color={board[15]} val={15} />
-        <BoardOnClick choose={() => choose(16)} color={board[16]} val={16} />
-        <BoardOnClick choose={() => choose(17)} color={board[17]} val={17} />
-        <BoardOnClick choose={() => choose(18)} color={board[18]} val={18} />
-        <BoardOnClick choose={() => choose(19)} color={board[19]} val={19} />
-        <BoardOnClick choose={() => choose(20)} color={board[20]} val={20} />
-
-        <BoardOnClick choose={() => choose(21)} color={board[21]} val={21} />
-        <BoardOnClick choose={() => choose(22)} color={board[22]} val={22} />
-        <BoardOnClick choose={() => choose(23)} color={board[23]} val={23} />
-        <BoardOnClick choose={() => choose(24)} color={board[24]} val={24} />
-        <BoardOnClick choose={() => choose(25)} color={board[25]} val={25} />
-        <BoardOnClick choose={() => choose(26)} color={board[26]} val={26} />
-        <BoardOnClick choose={() => choose(27)} color={board[27]} val={27} />
-
-        <BoardOnClick choose={() => choose(28)} color={board[28]} val={28} />
-        <BoardOnClick choose={() => choose(29)} color={board[29]} val={29} />
-        <BoardOnClick choose={() => choose(30)} color={board[30]} val={30} />
-        <BoardOnClick choose={() => choose(31)} color={board[31]} val={31} />
-        <BoardOnClick choose={() => choose(32)} color={board[32]} val={32} />
-        <BoardOnClick choose={() => choose(33)} color={board[33]} val={33} />
-        <BoardOnClick choose={() => choose(34)} color={board[34]} val={34} />
-
-        <BoardOnClick choose={() => choose(35)} color={board[35]} val={35} />
-        <BoardOnClick choose={() => choose(36)} color={board[36]} val={36} />
-        <BoardOnClick choose={() => choose(37)} color={board[37]} val={37} />
-        <BoardOnClick choose={() => choose(38)} color={board[38]} val={38} />
-        <BoardOnClick choose={() => choose(39)} color={board[39]} val={39} />
-        <BoardOnClick choose={() => choose(40)} color={board[40]} val={40} />
-        <BoardOnClick choose={() => choose(41)} color={board[41]} val={41} />
-      </div> */}
     </>
   )
 }

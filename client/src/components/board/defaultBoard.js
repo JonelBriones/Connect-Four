@@ -42,7 +42,8 @@ const defaultBoard = [
   '',
   '',
 ]
-
+const ROW_LENGTH = ['', '', '', '', '', '', '']
 module.exports = {
   defaultBoard,
+  ROW_LENGTH,
 }

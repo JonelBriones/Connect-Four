@@ -1,4 +1,5 @@
-const horizontal = [
+const HORIZONTAL_WINS = [
+  [35, 36, 37, 38, 39, 40, 41],
   [35, 36, 37, 38],
   [36, 37, 38, 39],
   [37, 38, 39, 40],
@@ -25,5 +26,5 @@ const horizontal = [
   [3, 4, 5, 6],
 ]
 module.exports = {
-  horizontal,
+  HORIZONTAL_WINS,
 }

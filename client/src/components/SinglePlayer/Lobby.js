@@ -1,23 +1,10 @@
 import React, { useState } from 'react'
-import { Button } from '@mui/material'
 import Board from '../board/Board'
 const Lobby = () => {
   return (
     <div>
-      <Button variant="contained" color="success" href="/">
-        Go back to menu
-      </Button>
-      <div className="board-container">
-        <div className="player-card one">
-          <h4>Player 1</h4>
-          <h3>0</h3>
-        </div>
-        <Board />
-        <div className="player-card two">
-          <h4>Player 2</h4>
-          <h3>0</h3>
-        </div>
-      </div>
+      <Board />
+
       {/* 
       <!-- Ingame menu start -->
 

@@ -5,8 +5,14 @@ const BoardOnClick = ({ choose, board, val, color }) => {
   return (
     <div
       onClick={choose}
-      className={board ? `circle fill ${board}` : `circle hover ${color}`}>
-      {val}
+      // onMouseEnter={onHoverEnter}
+      // onMouseLeave={onHoverLeave}
+      className={board ? `circle fill ${board}` : `circle`}>
+      {board ? (
+        <div className=""></div>
+      ) : (
+        <div className={`semi-circle ${color}`}></div>
+      )}
     </div>
   )
 }
