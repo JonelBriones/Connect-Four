@@ -10,10 +10,13 @@
 /* - Laptop 1024px 64rem */
 @media (min-width: 48.05rem) and (max-width: 64rem) {
   * {
-    box-sizing: border-box;
+    box-sizing: none;
   }
+
   .App {
     overflow: hidden;
+    width: fit-content;
+    height: 600px;
   }
 }
 /* - Tablet: 768px 48rem */
@@ -21,15 +24,13 @@
   * {
     box-sizing: border-box;
   }
+
   .App {
     overflow: hidden;
   }
 }
 /* - phone:480px 30rem */
 @media (max-width: 32rem) {
-  #phone {
-    background-color: red;
-  }
   * {
     box-sizing: none;
   }
@@ -37,18 +38,21 @@
     display: flex;
     place-items: center;
     margin: auto;
-    padding: 4rem 0;
+    padding: 8rem 0;
   }
   .lobby {
     width: 100%;
-    margin: auto;
+    margin: 2rem auto;
+  }
+  .nav-btns {
+    margin: 2rem auto;
   }
   .board-container {
     position: relative;
   }
   .player-card {
     position: absolute;
-    top: -200px;
+    top: -250px;
     width: 100px;
     height: 100px;
     padding: 10px 5px;
@@ -61,5 +65,20 @@
   }
   .marker {
     display: none;
+  }
+  .clock.red {
+    background-color: red;
+  }
+  .clock.yellow {
+    background-color: yellow;
+    color: #000;
+  }
+  .triangle.red::after,
+  .triangle.red::before {
+    background-color: red;
+  }
+  .triangle.yellow::after,
+  .triangle.yellow::before {
+    background-color: yellow;
   }
 }

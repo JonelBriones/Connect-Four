@@ -458,8 +458,8 @@ const Board = () => {
               />
             )
           })}
-          <div className="clock">
-            <div className="triangle"></div>
+          <div className={`clock ${color}`}>
+            <div className={`triangle ${color}`}></div>
             <div className="clock-info">
               <h5>PLAYER {color === 'red' ? '1' : '2'}'S TURN</h5>
               <h1>{remainingTime}s</h1>
