@@ -19,16 +19,17 @@
   }
 }
 /* - Tablet: 768px 48rem */
-@media (min-width: 32.05rem) and (max-width: 48rem) {
+/* @media (min-width: 32.05rem) and (max-width: 48rem) {
   * {
     box-sizing: border-box;
   }
   .App {
-    overflow: hidden;
+    background-color: orange;
+    border: 2px solid blue;
   }
-}
+} */
 /* - phone:480px 30rem */
-@media (max-width: 32rem) {
+@media (max-width: 48rem) {
   * {
     box-sizing: none;
   }
