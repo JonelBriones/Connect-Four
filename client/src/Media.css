@@ -10,13 +10,12 @@
 /* - Laptop 1024px 64rem */
 @media (min-width: 48.05rem) and (max-width: 64rem) {
   * {
-    box-sizing: none;
+    box-sizing: border-box;
   }
-
   .App {
     /* overflow: hidden; */
-    width: fit-content;
-    height: 600px;
+    /* width: fit-content;
+    height: 600px; */
   }
 }
 /* - Tablet: 768px 48rem */
@@ -24,7 +23,6 @@
   * {
     box-sizing: border-box;
   }
-
   .App {
     overflow: hidden;
   }
