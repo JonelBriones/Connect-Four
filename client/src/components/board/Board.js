@@ -29,11 +29,13 @@ const Board = () => {
     playerTwo: 0,
   })
   const { type } = useParams()
-  const [computer, setComputer] = useState(type === 'computer' ? true : false)
+  const [computer, setComputer] = useState(false)
+  const [local, setLocal] = useState(true)
   const [color, setColor] = useState('yellow')
   // const [color, setColor] = useState(computer ? 'red' : 'yellow')
   let time = 10
   const [remainingTime, setRemainingTime] = useState(time)
+  const [startGame, setStartGame] = useState(false)
   useEffect(() => {
     checkWin()
     if (color === 'red' && !result.winner) {
@@ -45,11 +47,13 @@ const Board = () => {
   }, [board])
 
   useEffect(() => {
-    const startTimer = setInterval(() => {
-      updateTime()
-    }, 1000)
-    return () => clearInterval(startTimer)
-  }, [color])
+    if (startGame) {
+      const startTimer = setInterval(() => {
+        updateTime()
+      }, 1000)
+      return () => clearInterval(startTimer)
+    }
+  }, [color, startGame])
   useEffect(() => {
     if (computer && color === 'yellow') {
       console.log('computers turn')
@@ -88,6 +92,7 @@ const Board = () => {
     }
   }
   const chooseColumn = (num) => {
+    if (!startGame) return
     let gameStarted = false
     for (let i = 0; i < GAME_START_ROW.length; i++) {
       board.map((val, idx) => {
@@ -349,17 +354,67 @@ const Board = () => {
   const turnOnMarker = (boolean) => {
     setToggleMarker(boolean)
   }
+  const switchMode = (mode) => {
+    if (mode === 'computer') {
+      setLocal(false)
+      setComputer(true)
+    }
+    if (mode === 'local') {
+      setLocal(true)
+      setComputer(false)
+    }
+  }
+  const onStart = () => {
+    setColor('red')
+    setStartGame(true)
+  }
+  const resetGame = () => {
+    setBoard(defaultBoard)
+    setResult({})
+    setColor('red')
+
+    time = 10
+    setRemainingTime(10)
+    setStartGame(false)
+  }
   return (
     <>
-      <Button variant="contained" color="playBtn" href="/">
+      {/* <Button variant="contained" color="playBtn" href="/">
         Go back to menu
-      </Button>
-      <Button variant="contained" color="success" onClick={restart}>
+      </Button> */}
+      <div className="nav-btns">
+        {local ? (
+          <Button
+            variant="contained"
+            color="playBtn"
+            onClick={() => switchMode('computer')}
+            disabled={startGame}>
+            PLAY COMPUTER
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="playBtn"
+            onClick={() => switchMode('local')}>
+            PLAY LOCAL
+          </Button>
+        )}
+        {!startGame && !result.winner ? (
+          <Button variant="contained" color="success" onClick={onStart}>
+            Start Game
+          </Button>
+        ) : (
+          <Button variant="contained" color="warning" onClick={resetGame}>
+            Restart
+          </Button>
+        )}
+      </div>
+      {/* <Button variant="contained" color="warning" onClick={restart}>
         Restart
-      </Button>
-      <Button variant="contained" color="warning" onClick={chooseRandom}>
+      </Button> */}
+      {/* <Button variant="contained" color="warning" onClick={chooseRandom}>
         RANDOM
-      </Button>
+      </Button> */}
       <div className="board-state">
         {result.winner ? (
           <h1>
@@ -406,14 +461,15 @@ const Board = () => {
           <div className="clock">
             <div className="triangle"></div>
             <div className="clock-info">
-              <h6>PLAYER 1'S TURN</h6>
+              <h5>PLAYER {color === 'red' ? '1' : '2'}'S TURN</h5>
               <h1>{remainingTime}s</h1>
             </div>
           </div>
         </div>
         <div className="player-card two">
           <img src="/images/player-two.svg" alt="player-two" />
-          <h5>PLAYER 2 {computer ? 'computer' : ''}</h5>
+
+          <h5>{computer ? 'COMPUTER' : 'PLAYER 2'}</h5>
           <h1>{winHistory.playerTwo}</h1>
         </div>
       </div>

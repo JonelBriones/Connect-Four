@@ -18,6 +18,12 @@
   background-color: hsl(257deg 100% 64%);
 }
 
+.nav-btns {
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+  margin: auto;
+}
 /* PLAYER CARD */
 
 .player-card {
