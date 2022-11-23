@@ -369,9 +369,9 @@ const Board = () => {
     setStartGame(true)
   }
   const resetGame = () => {
+    setColor('yellow')
     setBoard(defaultBoard)
     setResult({})
-    setColor('red')
 
     time = 10
     setRemainingTime(10)
