@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Button } from '@mui/material'
 import Board from '../board/Board'
 const Lobby = () => {
   return (

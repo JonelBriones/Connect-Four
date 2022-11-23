@@ -1,6 +1,21 @@
 .menu {
-  border: 2px solid red;
+  min-width: 400px;
+  overflow: auto;
 }
-.menu .header {
-  font-size: 24px;
+
+.menu div {
+  margin: 20px;
+}
+
+.btns {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: auto;
+}
+.btns > * {
+  display: block;
+  width: 200px;
 }

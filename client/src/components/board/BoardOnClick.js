@@ -9,9 +9,9 @@ const BoardOnClick = ({ choose, board, val, color }) => {
       // onMouseLeave={onHoverLeave}
       className={board ? `circle fill ${board}` : `circle`}>
       {board ? (
-        <div className=""></div>
+        <div className="">{val}</div>
       ) : (
-        <div className={`semi-circle ${color}`}></div>
+        <div className={`semi-circle ${color}`}>{val}</div>
       )}
     </div>
   )

@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, startTransition } from 'react'
 import { Button } from '@mui/material'
-import { FaRegHandPointer } from 'react-icons/fa'
 import BoardOnClick from './BoardOnClick'
 import { defaultBoard, ROW_LENGTH } from './defaultBoard'
 import {
@@ -11,27 +10,96 @@ import {
   COLUMN_5,
   COLUMN_6,
   COLUMN_7,
-} from './rows'
-import { HORIZONTAL_WINS } from './winPatterns'
+  GAME_START_ROW,
+} from './columns'
+import {
+  DIAGONAL_LEFT_WINS,
+  DIAGONAL_RIGHT_WINS,
+  HORIZONTAL_WINS,
+  VERTICAL_WINS,
+} from './winPatterns'
+import { useParams } from 'react-router-dom'
+console.log(window.location.href)
+
 const Board = () => {
   const [board, setBoard] = useState(defaultBoard)
   const [result, setResult] = useState({})
-  const [color, setColor] = useState('yellow')
   const [winHistory, setWinHistory] = useState({
     playerOne: 0,
     playerTwo: 0,
   })
-  const [onHover, setOnHovering] = useState()
+  const { type } = useParams()
+  const [computer, setComputer] = useState(type === 'computer' ? true : false)
+  const [color, setColor] = useState('yellow')
+  // const [color, setColor] = useState(computer ? 'red' : 'yellow')
+  let time = 10
+  const [remainingTime, setRemainingTime] = useState(time)
   useEffect(() => {
     checkWin()
-    if (color === 'red') {
+    if (color === 'red' && !result.winner) {
       setColor('yellow')
     }
-    if (color === 'yellow') {
+    if (color === 'yellow' && !result.winner) {
       setColor('red')
     }
   }, [board])
+
+  useEffect(() => {
+    const startTimer = setInterval(() => {
+      updateTime()
+    }, 1000)
+    return () => clearInterval(startTimer)
+  }, [color])
+  useEffect(() => {
+    if (computer && color === 'yellow') {
+      console.log('computers turn')
+      computerTurn()
+      console.log('YELLOW PICKED A SLOT')
+    }
+  }, [computer && color === 'yellow'])
+  const updateTime = () => {
+    time--
+    if (result.winner) {
+      return
+    }
+    if (time <= -1) {
+      time = 10
+      setRemainingTime(time)
+      console.log('time ran out')
+      chooseRandom()
+    }
+    console.log('remaining time', time)
+    setRemainingTime(time)
+  }
+  const randomSlot = () => {
+    return Math.floor(Math.random() * 41)
+  }
+  const computerTurn = () => {
+    chooseColumn(Math.floor(Math.random() * 41))
+  }
+  const chooseRandom = () => {
+    let randomNumber = randomSlot()
+    console.log(randomNumber)
+    if (board[randomNumber] === '') {
+      chooseColumn(randomNumber)
+      checkWin()
+    } else {
+      return chooseRandom()
+    }
+  }
   const chooseColumn = (num) => {
+    let gameStarted = false
+    for (let i = 0; i < GAME_START_ROW.length; i++) {
+      board.map((val, idx) => {
+        if (idx === GAME_START_ROW[i] && val === 'red') {
+          gameStarted = true
+        }
+      })
+    }
+    if (!gameStarted && color === 'yellow') {
+      setColor('red')
+      return
+    }
     if (COLUMN_1.includes(num)) {
       console.log('it contains numbers from column 1')
       choose(COLUMN_1, num)
@@ -61,9 +129,8 @@ const Board = () => {
       choose(COLUMN_7, num)
     }
   }
+
   const choose = (columnNum, circleNum) => {
-    // console.log(columnNum)
-    // console.log(circleNum)
     if (result.winner) return
     let columnsEmpty = []
     for (let i = 0; i < columnNum.length; i++) {
@@ -79,6 +146,7 @@ const Board = () => {
         ? setBoard(
             board.map((val, idx) => {
               if (idx === columnsEmpty[0] && val === '') {
+                setRemainingTime(10)
                 return color
               }
 
@@ -87,9 +155,10 @@ const Board = () => {
           )
         : val
     )
-    // console.log('empty circles in column', columnsEmpty)
   }
+
   const checkWin = () => {
+    console.log('CHECKING VERTICAL WINS')
     HORIZONTAL_WINS.forEach((currentPattern) => {
       // IF THERE ARE < 4 CONNECTED SLOTS, RETURN
       const variantOne_RowOne = board[currentPattern[0]]
@@ -106,7 +175,7 @@ const Board = () => {
       let foundWinningPattern = true
       currentPattern.forEach((idx) => {
         if (board[idx] !== color) {
-          console.log(`checking slots... ${idx} matches player:${color}`)
+          // console.log(`checking slots... ${idx} matches player:${color}`)
           foundWinningPattern = false
         }
       })
@@ -116,7 +185,7 @@ const Board = () => {
         if (color === 'yellow') winner = 'Player Two'
         let gameResult = {
           winner: winner,
-          state: 'nice cock!',
+          state: 'has won!',
         }
         setResult(gameResult)
         if (winner === 'Player One') {
@@ -131,23 +200,153 @@ const Board = () => {
       }
       console.log('FOUR SLOTS HAVE BEEN PICKED, POTENTIAL WIN!')
     })
+    console.log('CHECKING VERTICAL WINS')
+    VERTICAL_WINS.forEach((currentPattern) => {
+      // IF THERE ARE < 4 CONNECTED SLOTS, RETURN
+      const variantOne_ColumnOne = board[currentPattern[0]]
+      const variantTwo_ColumnOne = board[currentPattern[1]]
+      const variantThree_ColumnOne = board[currentPattern[2]]
+      if (
+        variantOne_ColumnOne === '' ||
+        variantTwo_ColumnOne === '' ||
+        variantThree_ColumnOne === ''
+      )
+        return
+      let foundWinningPattern = true
+      currentPattern.forEach((idx) => {
+        if (board[idx] !== color) {
+          // console.log(`checking slots... ${idx} matches player:${color}`)
+          foundWinningPattern = false
+        }
+      })
+      if (foundWinningPattern) {
+        let winner = ''
+        if (color === 'red') winner = 'Player One'
+        if (color === 'yellow') winner = 'Player Two'
+        let gameResult = {
+          winner: winner,
+          state: 'has won!',
+        }
+        setResult(gameResult)
+        if (winner === 'Player One') {
+          setWinHistory({
+            ...winHistory,
+            playerOne: winHistory.playerOne + 1,
+          })
+        }
+        if (winner === 'Player Two') {
+          setWinHistory({
+            ...winHistory,
+            playerTwo: winHistory.playerTwo + 1,
+          })
+        }
+      }
+      console.log('FOUR SLOTS HAVE BEEN PICKED, POTENTIAL WIN!')
+    })
+    console.log('CHECKING DIAGONAL RIGHT WINS')
+    DIAGONAL_RIGHT_WINS.forEach((currentPattern) => {
+      // IF THERE ARE < 4 CONNECTED SLOTS, RETURN
+      // const variantOne_ColumnOne = board[currentPattern[0]]
+      // const variantTwo_ColumnOne = board[currentPattern[1]]
+      // const variantThree_ColumnOne = board[currentPattern[2]]
+      // if (
+      //   variantOne_ColumnOne === '' ||
+      //   variantTwo_ColumnOne === '' ||
+      //   variantThree_ColumnOne === ''
+      // )
+      //   return
+      let foundWinningPattern = true
+      currentPattern.forEach((idx) => {
+        if (board[idx] !== color) {
+          // console.log(`checking slots... ${idx} matches player:${color}`)
+          foundWinningPattern = false
+        }
+      })
+      if (foundWinningPattern) {
+        let winner = ''
+        if (color === 'red') winner = 'Player One'
+        if (color === 'yellow') winner = 'Player Two'
+        let gameResult = {
+          winner: winner,
+          state: 'has won!',
+        }
+        setResult(gameResult)
+        if (winner === 'Player One') {
+          setWinHistory({
+            ...winHistory,
+            playerOne: winHistory.playerOne + 1,
+          })
+        }
+        if (winner === 'Player Two') {
+          setWinHistory({
+            ...winHistory,
+            playerTwo: winHistory.playerTwo + 1,
+          })
+        }
+      }
+      console.log('FOUR SLOTS HAVE BEEN PICKED, POTENTIAL WIN!')
+    })
+    console.log('CHECKING DIAGONAL LEFT WINS')
+    DIAGONAL_LEFT_WINS.forEach((currentPattern) => {
+      // IF THERE ARE < 4 CONNECTED SLOTS, RETURN
+      // const variantOne_ColumnOne = board[currentPattern[0]]
+      // const variantTwo_ColumnOne = board[currentPattern[1]]
+      // const variantThree_ColumnOne = board[currentPattern[2]]
+      // if (
+      //   variantOne_ColumnOne === '' ||
+      //   variantTwo_ColumnOne === '' ||
+      //   variantThree_ColumnOne === ''
+      // )
+      //   return
+      let foundWinningPattern = true
+      currentPattern.forEach((idx) => {
+        if (board[idx] !== color) {
+          // console.log(`checking slots... ${idx} matches player:${color}`)
+          foundWinningPattern = false
+        }
+      })
+      if (foundWinningPattern) {
+        let winner = ''
+        if (color === 'red') winner = 'Player One'
+        if (color === 'yellow') winner = 'Player Two'
+        let gameResult = {
+          winner: winner,
+          state: 'has won!',
+        }
+        setResult(gameResult)
+        if (winner === 'Player One') {
+          setWinHistory({
+            ...winHistory,
+            playerOne: winHistory.playerOne + 1,
+          })
+        }
+        if (winner === 'Player Two') {
+          setWinHistory({
+            ...winHistory,
+            playerTwo: winHistory.playerTwo + 1,
+          })
+        }
+      }
+      console.log('FOUR SLOTS HAVE BEEN PICKED, POTENTIAL WIN!')
+    })
   }
   const restart = () => {
     setBoard(defaultBoard)
     setResult({})
+    setColor('yellow')
+    time = 10
+    setRemainingTime(10)
   }
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   useEffect(() => {
     const updateMousePosition = (e) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
-      console.log(mousePosition.x)
     }
     window.addEventListener('mousemove', updateMousePosition)
     return () => window.removeEventListener('mousemove', updateMousePosition)
   }, [])
-  const [toggleMarker, setToggleMarker] = useState(true)
+  const [toggleMarker, setToggleMarker] = useState(false)
   const turnOnMarker = (boolean) => {
-    console.log('hovering', toggleMarker)
     setToggleMarker(boolean)
   }
   return (
@@ -158,51 +357,63 @@ const Board = () => {
       <Button variant="contained" color="success" onClick={restart}>
         Restart
       </Button>
-      {result.winner ? (
-        <h1>
-          {`${result.winner}, 
+      <Button variant="contained" color="warning" onClick={chooseRandom}>
+        RANDOM
+      </Button>
+      <div className="board-state">
+        {result.winner ? (
+          <h1>
+            {`${result.winner}, 
           ${result.state}`}
-        </h1>
-      ) : null}
+          </h1>
+        ) : null}
+      </div>
       <div className="board-container">
         <div className="player-card one">
           <img src="/images/player-one.svg" alt="player-one" />
           <div className="info">
-            <h5>Player One</h5>
+            <h5>PLAYER 1</h5>
             <h1>{winHistory.playerOne}</h1>
           </div>
         </div>
+        <img
+          src={`/images/marker-${color}.svg`}
+          alt="player-two"
+          className={`marker ${
+            !toggleMarker || result.winner ? 'disabled' : null
+          }`}
+          style={{
+            transform: `translate(${mousePosition.x}px)`,
+            // transition: 'opacity 2s ease',
+            // opacity: `${toggleMarker ? 1 : 0}`,
+          }}
+        />
         <div
           className="board"
           onMouseEnter={() => turnOnMarker(true)}
           onMouseLeave={() => turnOnMarker(false)}>
-          <>
-            <img
-              src={`/images/marker-${color}.svg`}
-              alt="player-two"
-              className={`marker ${!toggleMarker ? 'disabled' : null}`}
-              style={{
-                transform: `translate(${mousePosition.x}px)`,
-                // transition: 'opacity 2s ease',
-                // opacity: `${toggleMarker ? 1 : 0}`,
-              }}
-            />
-            {board.map((__, idx) => {
-              return (
-                <BoardOnClick
-                  choose={!result.winner ? () => chooseColumn(idx) : null}
-                  board={board[idx]}
-                  val={idx}
-                  color={!result.winner ? color : null}
-                  key={idx}
-                />
-              )
-            })}
-          </>
+          {board.map((__, idx) => {
+            return (
+              <BoardOnClick
+                choose={!result.winner ? () => chooseColumn(idx) : null}
+                board={board[idx]}
+                val={idx}
+                color={!result.winner ? color : null}
+                key={idx}
+              />
+            )
+          })}
+          <div className="clock">
+            <div className="triangle"></div>
+            <div className="clock-info">
+              <h6>PLAYER 1'S TURN</h6>
+              <h1>{remainingTime}s</h1>
+            </div>
+          </div>
         </div>
         <div className="player-card two">
           <img src="/images/player-two.svg" alt="player-two" />
-          <h5>Player Two</h5>
+          <h5>PLAYER 2 {computer ? 'computer' : ''}</h5>
           <h1>{winHistory.playerTwo}</h1>
         </div>
       </div>

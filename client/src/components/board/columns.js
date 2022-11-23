@@ -6,6 +6,7 @@ const COLUMN_5 = [39, 32, 25, 18, 11, 4]
 const COLUMN_6 = [40, 33, 26, 19, 12, 5]
 const COLUMN_7 = [41, 34, 27, 20, 13, 6]
 
+const GAME_START_ROW = [35, 36, 37, 38, 39, 40, 41]
 module.exports = {
   COLUMN_1,
   COLUMN_2,
@@ -14,4 +15,5 @@ module.exports = {
   COLUMN_5,
   COLUMN_6,
   COLUMN_7,
+  GAME_START_ROW,
 }

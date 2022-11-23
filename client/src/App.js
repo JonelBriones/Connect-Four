@@ -8,7 +8,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<Menu />} path="/" />
-          <Route element={<Lobby />} path="/play" />
+          <Route element={<Lobby />} path="/play/vs/:type" />
+          {/* <Route element={<Lobby />} path="/play/vs/computer" /> */}
         </Routes>
       </BrowserRouter>
     </div>

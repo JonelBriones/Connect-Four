@@ -1,11 +1,9 @@
-import React from 'react'
-// import './menu.styles.css'
-import { Button, Typography, Container } from '@mui/material'
+import React, { useState } from 'react'
+import './menu.styles.css'
+import { Button, Typography } from '@mui/material'
 const Menu = () => {
   return (
     <>
-      {/* <!-- Main menu start --> */}
-      {/* <Container> */}
       <div className="menu">
         <div className="header">
           <Typography variant="h1">Player vs Player</Typography>
@@ -21,11 +19,15 @@ const Menu = () => {
             (either vertically, horizontally, or diagonally).
           </Typography>
         </div>
-        <Button variant="contained" color="playBtn" href="/play">
-          Click to play!
-        </Button>
+        <div className="btns">
+          <Button variant="contained" color="playBtn" href="/play/vs/local">
+            Local
+          </Button>
+          <Button variant="contained" color="playBtn" href="/play/vs/computer">
+            Player vs Computer
+          </Button>
+        </div>
       </div>
-      {/* </Container> */}
     </>
   )
 }
