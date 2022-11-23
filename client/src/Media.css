@@ -1,0 +1,41 @@
+/* - Desktop: 1200px 75rem */
+@media (min-width: 64.05rem) {
+  #desktop {
+    background-color: orange;
+  }
+  * {
+    box-sizing: border-box;
+  }
+}
+/* - Laptop 1024px 64rem */
+@media (min-width: 48.05rem) and (max-width: 64rem) {
+  #laptop {
+    background-color: pink;
+  }
+}
+/* - Tablet: 768px 48rem */
+@media (min-width: 32.05rem) and (max-width: 48rem) {
+  #tablet {
+    background-color: blue;
+  }
+}
+/* - phone:480px 30rem */
+@media (max-width: 32rem) {
+  #phone {
+    background-color: red;
+  }
+  * {
+    box-sizing: none;
+  }
+  .App {
+    /* width: 100%; */
+    display: flex;
+    place-items: center;
+    margin: auto;
+    overflow: auto;
+  }
+  .lobby {
+    width: 800px;
+    margin: auto;
+  }
+}

@@ -378,7 +378,7 @@ const Board = () => {
     setStartGame(false)
   }
   return (
-    <>
+    <div className="lobby">
       {/* <Button variant="contained" color="playBtn" href="/">
         Go back to menu
       </Button> */}
@@ -473,7 +473,7 @@ const Board = () => {
           <h1>{winHistory.playerTwo}</h1>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

@@ -1,4 +1,5 @@
 import './App.css'
+import './Media.css'
 import Lobby from './components/SinglePlayer/Lobby'
 import Menu from './routes/Menu'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'

@@ -1,7 +1,6 @@
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
   font-family: 'SpaceGrotesk-Bold', 'Courier New', Courier, monospace;
 }
 @font-face {
@@ -10,12 +9,15 @@
   font-weight: normal;
   font-style: normal;
 }
+html {
+  background-color: hsl(257deg 100% 64%);
+}
 .App {
   height: 100vh;
   width: 100vw;
   padding: 4rem;
   text-align: center;
-  background-color: hsl(257deg 100% 64%);
+  position: relative;
 }
 
 .nav-btns {
@@ -204,29 +206,4 @@
   border: 2px solid black;
   box-shadow: 0px 4px 1px 1px #000;
   border-radius: 10px 10px 20px 20px;
-}
-
-/* - Desktop: 1200px 75rem */
-@media (min-width: 64.05rem) {
-  #desktop {
-    background-color: orange;
-  }
-}
-/* - Laptop 1024px 64rem */
-@media (min-width: 48.05rem) and (max-width: 64rem) {
-  #laptop {
-    background-color: pink;
-  }
-}
-/* - Tablet: 768px 48rem */
-@media (min-width: 32.05rem) and (max-width: 48rem) {
-  #tablet {
-    background-color: blue;
-  }
-}
-/* - phone:480px 30rem */
-@media (max-width: 32rem) {
-  #phone {
-    background-color: red;
-  }
 }
