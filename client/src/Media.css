@@ -14,7 +14,7 @@
   }
 
   .App {
-    overflow: hidden;
+    /* overflow: hidden; */
     width: fit-content;
     height: 600px;
   }
