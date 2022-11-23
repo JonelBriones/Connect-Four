@@ -18,6 +18,7 @@ html {
   padding: 4rem;
   text-align: center;
   position: relative;
+  overflow: hidden;
 }
 
 .nav-btns {
@@ -30,7 +31,6 @@ html {
 
 .player-card {
   border: 2px solid black;
-  padding: 10px 5px;
   border-radius: 20px;
   box-shadow: 0px 4px 1px 1px;
   background-color: #fff;
@@ -41,6 +41,8 @@ html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  z-index: 100;
 }
 
 .info {
@@ -76,7 +78,6 @@ html {
   width: 520px;
   height: 460px;
   padding: 10px;
-  margin: 0px auto;
   justify-content: center;
   gap: 10px;
   border: 2px solid black;
@@ -118,13 +119,14 @@ html {
   background-color: #ffeb3b;
 }
 .semi-circle.yellow:hover {
-  background-color: #ffeb3b;
+  /* background-color: #ffeb3b; */
 }
 .semi-circle.red:hover {
-  background-color: #e53935;
+  /* background-color: #e53935; */
 }
 .columnHover {
   position: relative;
+
   /* z-index: 2; */
 }
 .columnHover div {

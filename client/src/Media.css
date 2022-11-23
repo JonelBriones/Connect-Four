@@ -9,14 +9,14 @@
 }
 /* - Laptop 1024px 64rem */
 @media (min-width: 48.05rem) and (max-width: 64rem) {
-  #laptop {
-    background-color: pink;
+  * {
+    box-sizing: border-box;
   }
 }
 /* - Tablet: 768px 48rem */
 @media (min-width: 32.05rem) and (max-width: 48rem) {
-  #tablet {
-    background-color: blue;
+  * {
+    box-sizing: border-box;
   }
 }
 /* - phone:480px 30rem */
@@ -28,14 +28,33 @@
     box-sizing: none;
   }
   .App {
-    /* width: 100%; */
     display: flex;
     place-items: center;
     margin: auto;
-    overflow: auto;
+    /* overflow: auto; */
+    padding: 4rem 0;
   }
   .lobby {
-    width: 800px;
+    width: 100%;
     margin: auto;
+  }
+  .board-container {
+    position: relative;
+  }
+  .player-card {
+    position: absolute;
+    top: -200px;
+    width: 100px;
+    height: 100px;
+    padding: 10px 5px;
+  }
+  .player-card.one {
+    left: 100px;
+  }
+  .player-card.two {
+    right: 100px;
+  }
+  .marker {
+    display: none;
   }
 }

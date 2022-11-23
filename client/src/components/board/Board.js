@@ -389,7 +389,7 @@ const Board = () => {
             color="playBtn"
             onClick={() => switchMode('computer')}
             disabled={startGame}>
-            PLAY COMPUTER
+            COMPUTER
           </Button>
         ) : (
           <Button
